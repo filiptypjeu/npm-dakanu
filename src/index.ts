@@ -1,5 +1,5 @@
 import parseApacheDirectory, { IApacheContent } from "parse-apache-directory-index";
-import fetch from "node-fetch";
+import fetch, { Response } from "node-fetch";
 
 export interface IDakaItem {
   title: string;
@@ -25,11 +25,11 @@ export default class DakaNu {
     return new URL(this.parseUrl + path);
   }
 
-  public files(): Promise<IDakaItem[]> {
+  public async files(): Promise<IDakaItem[]> {
     return this.search(this.filesPath);
   }
 
-  public sounds(): Promise<IDakaItem[]> {
+  public async sounds(): Promise<IDakaItem[]> {
     return this.search(this.soundsPath);
   }
 
@@ -66,14 +66,15 @@ export default class DakaNu {
       .catch((e: Error) => Promise.reject(e));
   }
 
-  public url(item: IDakaItem): string {
-    return this.baseUrl + item.path;
+  public url(itemOrPath: IDakaItem | string): string {
+    return this.baseUrl + (typeof itemOrPath === "string" ? itemOrPath : itemOrPath.path);
   }
 
-  public queue(item: IDakaItem) {
+  public async queue(itemOrUrl: IDakaItem | string): Promise<Response> {
+    const body = typeof itemOrUrl === "string" ? `external_url = ${itemOrUrl}` : `url=${itemOrUrl.path}`;
     return fetch(this.pathToParseUrl(this.queuePath), {
       method: "PUSH",
-      body: `url=${item.path}`,
+      body,
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
   }
