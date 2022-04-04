@@ -21,9 +21,7 @@ export default class DakaNu {
     this.soundsPath = o.soundsPath || "/soundboard/sounds/";
   }
 
-  private pathToParseUrl(path: string): URL {
-    return new URL(this.parseUrl + path);
-  }
+  private isUrl = (urlOrPath: string): boolean => /^[a-z][a-z0-9+.-]*:/.test(urlOrPath);
 
   public async files(): Promise<IDakaItem[]> {
     return this.search(this.filesPath);
@@ -44,7 +42,7 @@ export default class DakaNu {
       return [];
     }
 
-    return fetch(this.pathToParseUrl(path))
+    return fetch(this.parseUrl + path)
       .then(res => res.text())
       .then(html => {
         const a: IDakaItem[] = parseApacheDirectory(html).files.map((item: IApacheContent) => ({
@@ -70,9 +68,9 @@ export default class DakaNu {
     return this.baseUrl + (typeof itemOrPath === "string" ? itemOrPath : itemOrPath.path);
   }
 
-  public async queue(itemOrUrl: IDakaItem | string): Promise<Response> {
-    const body = typeof itemOrUrl === "string" ? `external_url = ${itemOrUrl}` : `url=${itemOrUrl.path}`;
-    return fetch(this.pathToParseUrl(this.queuePath), {
+  public async queue(itemOrPathOrUrl: IDakaItem | string): Promise<Response> {
+    const body = typeof itemOrPathOrUrl === "string" ? `${this.isUrl(itemOrPathOrUrl) ? "external_" : ""}url=${itemOrPathOrUrl}` : `url=${itemOrPathOrUrl.path}`;
+    return fetch(this.baseUrl + this.queuePath, {
       method: "PUSH",
       body,
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
