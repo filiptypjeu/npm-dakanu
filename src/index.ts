@@ -80,7 +80,7 @@ export default class DakaNu {
   }
 
   public async queue(itemOrPathOrUrl: IDakaItem | string): Promise<Response> {
-    const p  = typeof itemOrPathOrUrl === "string" ? itemOrPathOrUrl : itemOrPathOrUrl.path;
+    const p = typeof itemOrPathOrUrl === "string" ? itemOrPathOrUrl : itemOrPathOrUrl.path;
     const url = this.isUrl(p) ? p : `${this.baseUrl}${p}`;
     const body = `external_url=${url}`;
     return fetch(this.baseUrl + this.queuePath, {
