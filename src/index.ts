@@ -69,10 +69,9 @@ export default class DakaNu {
   }
 
   public async queue(itemOrPathOrUrl: IDakaItem | string): Promise<Response> {
-    const body =
-      typeof itemOrPathOrUrl === "string"
-        ? `${this.isUrl(itemOrPathOrUrl) ? "external_" : ""}url=${itemOrPathOrUrl}`
-        : `url=${itemOrPathOrUrl.path}`;
+    const p  = typeof itemOrPathOrUrl === "string" ? itemOrPathOrUrl : itemOrPathOrUrl.path;
+    const url = this.isUrl(p) ? p : `${this.baseUrl}${p}`;
+    const body = `external_url=${url}`;
     return fetch(this.baseUrl + this.queuePath, {
       method: "POST",
       body,
