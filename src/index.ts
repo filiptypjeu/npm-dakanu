@@ -74,7 +74,7 @@ export default class DakaNu {
         ? `${this.isUrl(itemOrPathOrUrl) ? "external_" : ""}url=${itemOrPathOrUrl}`
         : `url=${itemOrPathOrUrl.path}`;
     return fetch(this.baseUrl + this.queuePath, {
-      method: "PUSH",
+      method: "POST",
       body,
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
