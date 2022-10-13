@@ -48,6 +48,17 @@ test("search all sounds", async () => {
   });
 }, 10000);
 
+test("search all sounds and filesOnly", async () => {
+  const a = await daka.sounds();
+  const sounds = await daka.filesOnly(a);
+  expect(sounds.slice(0, 10)).toHaveLength(10);
+  expect(sounds[0]).toEqual({
+    title: "En kyllä opiskele enää ikinä.mp3",
+    path: "/soundboard/sounds/Amfilla%20Tavataan/En%20kyll%c3%a4%20opiskele%20en%c3%a4%c3%a4%20ikin%c3%a4.mp3",
+    isFile: true,
+  });
+}, 10000);
+
 test("search priestess", async () => {
   const a = await daka.search("/files/Priestess/");
   expect(a).toEqual([

@@ -61,11 +61,22 @@ export default class DakaNu {
           },
         ].concat(a);
       })
-      .catch((e: Error) => Promise.reject(e));
+      .catch(() => []);
   }
 
   public url(itemOrPath: IDakaItem | string): string {
     return this.baseUrl + (typeof itemOrPath === "string" ? itemOrPath : itemOrPath.path);
+  }
+
+  public async filesOnly(items: IDakaItem[]): Promise<IDakaItem[]> {
+    let a: IDakaItem[] = [];
+
+    for (const item of items) {
+      if (item.isFile) a.push(item);
+      else a = a.concat(await this.filesOnly((await this.search(item.path)).slice(1)));
+    }
+
+    return a;
   }
 
   public async queue(itemOrPathOrUrl: IDakaItem | string): Promise<Response> {
